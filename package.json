@@ -1,0 +1,22 @@
+{
+  "name": "tiny-app",
+  "version": "1.0.0",
+  "description": "A tiny url shortener a la bit.ly or goo.gl",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cwkosman/tiny-app.git"
+  },
+  "author": "cwkosman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cwkosman/tiny-app/issues"
+  },
+  "homepage": "https://github.com/cwkosman/tiny-app#readme",
+  "dependencies": {
+    "express": "^4.14.1"
+  }
+}
