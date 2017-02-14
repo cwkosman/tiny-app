@@ -4,7 +4,7 @@ const PORT = process.env.PORT || 8080;
 
 app.set("view engine", "ejs");
 
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
@@ -24,7 +24,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id };
+  let templateVars = { urls: urlDatabase, shortURL: req.params.id, port: PORT};
   res.render("urls_show", templateVars);
 });
 
