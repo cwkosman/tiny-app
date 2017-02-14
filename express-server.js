@@ -19,8 +19,13 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase, port: PORT };
   res.render("urls_index", templateVars);
+});
+
+app.get("/urls/:id", (req, res) => {
+  let templateVars = { shortURL: req.params.id };
+  res.render("urls_show", templateVars);
 });
 
 app.get("/hello", (req, res) => {
