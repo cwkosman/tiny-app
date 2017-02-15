@@ -35,9 +35,10 @@ app.get("/urls", (req, res) => {
 
 app.post("/urls", (req, res) => {
   //TODO: make sure generatedshortURL does not conflict
-  urlDatabase[generateShortURL()] = req.body.longURL;
+  let shortURL = generateShortURL();
+  urlDatabase[shortURL] = req.body.longURL;
   console.log(urlDatabase);
-  res.send("Ok");
+  res.send(`http://localhost:${PORT}/u/${shortURL} now redirects to ${req.body.longURL}`);
 });
 
 app.get("/urls/new", (req, res) => {
@@ -51,7 +52,7 @@ app.get("/urls/:id", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  res.redirect(302, longURL);
 });
 
 app.listen(PORT, () => {
