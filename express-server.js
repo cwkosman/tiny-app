@@ -26,10 +26,6 @@ app.get("/", (req, res) => {
   redirect("/urls");
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
 //Show urls index
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase, port: PORT };
@@ -47,7 +43,8 @@ app.post("/urls", (req, res) => {
   //TODO: make sure generatedshortURL does not conflict
   let shortURL = generateShortURL();
   urlDatabase[shortURL] = req.body.longURL;
-  res.send(`http://localhost:${PORT}/u/${shortURL} now redirects to ${req.body.longURL}`);
+  console.log(req.headers);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 //GET individual URL page (with update form)

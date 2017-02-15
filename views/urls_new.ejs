@@ -3,15 +3,16 @@
   <head>
   <title>TinyApp</title>
   </head>
-  <body style="font-size:20px; padding:50px;">
+  <body>
     <header>
       <% include ./partials/_header %>
     </header>
-
+    <main>
     <form action="/urls" method="POST">
       <label for="longURL"><h1> Create New ShortURL</h1></label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+      <input id="longURL" type="text" name="longURL" placeholder="http://">
       <input type="submit" value="Submit">
     </form>
+  </main>
   </body>
 </html>
