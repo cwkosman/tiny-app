@@ -11,8 +11,12 @@
     <p><%= urls[shortURL] %></p>
     <form action="/urls/<%= shortURL %>" method="POST">
       <label for="longURL"><h1>Update ShortURL <%= shortURL %></h1></label>
-      <input id="longURL" type="text" name="longURL" value="<%= urls[shortURL] %>" style="width: 300px">
+      <input id="longURL" type="text" name="longURL" value="<%= urls[shortURL] %>">
       <input type="submit" value="Update">
+    </form>
+    <form method="POST" action="/urls/<%= shortURL %>/delete">
+      <input id="shortURL" type="Submit" value="Delete">
+    </form>
   </main>
 </body>
 </html>

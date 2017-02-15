@@ -20,57 +20,62 @@ function generateShortURL() {
   return(short.join(''));
 }
 
+//Redirect from root
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  //TODO Handle logged in and logged out according to tech specs
+  redirect("/urls");
 });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+//Show urls index
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase, port: PORT };
   res.render("urls_index", templateVars);
+  //console.log(req.query);
 });
 
-app.post("/urls", (req, res) => {
-  //TODO: make sure generatedshortURL does not conflict
-  let shortURL = generateShortURL();
-  urlDatabase[shortURL] = req.body.longURL;
-  console.log(urlDatabase);
-  res.send(`http://localhost:${PORT}/u/${shortURL} now redirects to ${req.body.longURL}`);
-});
-
+//New URL form
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+//Create new url
+app.post("/urls", (req, res) => {
+  //TODO: make sure generatedshortURL does not conflict
+  let shortURL = generateShortURL();
+  urlDatabase[shortURL] = req.body.longURL;
+  res.send(`http://localhost:${PORT}/u/${shortURL} now redirects to ${req.body.longURL}`);
+});
+
+//GET individual URL page (with update form)
 app.get("/urls/:id", (req, res) => {
   let templateVars = { urls: urlDatabase, shortURL: req.params.id, port: PORT};
   res.render("urls_show", templateVars);
   //TODO add confirmation message
 });
 
+//Update an existing URL
 app.post("/urls/:id", (req, res) => {
   urlDatabase[req.params.id] = req.body.longURL;
-  console.log(urlDatabase);
   res.redirect("/urls");
 });
 
+//Redirect user to the long URL to which a shortened URL is assigned
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(302, longURL);
 });
 
+//Delete a URL combo
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
   //TODO add confirmation message
-  //TODO fix redirect
   res.redirect("/urls");
 });
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}!`);
 });
-
-generateShortURL();

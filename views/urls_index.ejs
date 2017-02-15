@@ -9,6 +9,11 @@
   </header>
   <main>
   <h1> Your Short URLs </h1>
+    <form id="#search" method="GET" action="/urls">
+      <label for="shortURL">Search</h1></label>
+      <input id="shortURL" type="text" name="search">
+      <input type="Submit" value="Search">
+    </form>
     <ul id="#urls">
       <% for (url in urls) { %>
       <li><%= url %> --> <%= urls[url] %>
