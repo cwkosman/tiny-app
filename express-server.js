@@ -17,7 +17,7 @@ function generateShortURL() {
   for (var i = 0; i < 6; i++) {
     short[i] = base62Chars.charAt(Math.floor(Math.random() * base62Chars.length));
   }
-  console.log(short.join(''));
+  return(short.join(''));
 }
 
 app.get("/", (req, res) => {
@@ -34,7 +34,9 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
+  //TODO: make sure generatedshortURL does not conflict
+  urlDatabase[generateShortURL()] = req.body.longURL;
+  console.log(urlDatabase);
   res.send("Ok");
 });
 
@@ -42,15 +44,14 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-
 app.get("/urls/:id", (req, res) => {
   let templateVars = { urls: urlDatabase, shortURL: req.params.id, port: PORT};
   res.render("urls_show", templateVars);
 });
 
-
-app.get("/hello", (req, res) => {
-  res.end("<html><body>Hello <b>World</b></body></html>\n");
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
 app.listen(PORT, () => {
