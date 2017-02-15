@@ -7,9 +7,9 @@
     <header>
       <% include ./partials/_header %>
     </header>
-    <h1> Create New Short URL</h1>
-    <form action="/urls" method="POST" style="margin:150px;">
-      <label for="longURL">Enter a URL:</label>
+
+    <form action="/urls" method="POST">
+      <label for="longURL"><h1> Create New ShortURL</h1></label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Submit">
     </form>
