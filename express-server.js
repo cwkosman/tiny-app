@@ -11,6 +11,15 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+function generateShortURL() {
+  const short = [];
+  const base62Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (var i = 0; i < 6; i++) {
+    short[i] = base62Chars.charAt(Math.floor(Math.random() * base62Chars.length));
+  }
+  console.log(short.join(''));
+}
+
 app.get("/", (req, res) => {
   res.end("Hello!");
 });
@@ -47,3 +56,5 @@ app.get("/hello", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}!`);
 });
+
+generateShortURL();
