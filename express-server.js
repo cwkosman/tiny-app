@@ -88,8 +88,18 @@ app.get("/login", (req, res) => {
 
 //Login route
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/");
+  let existingUser = Object.values(users).find((user) => {
+    return user.email === req.body.email;
+  });
+  if (!existingUser) {
+    res.status(403).send("User with that e-mail does not exist");
+  } else if (existingUser.password !== req.body.password) {
+    res.status(403).send("Password incorrect");
+  } else {
+    res.cookie("user_id", existingUser.id);
+    res.redirect("/");
+  }
+
 });
 
 //Show urls index
