@@ -1,15 +1,16 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
 const users = {
-  "dv4d3r": {
-    "id": "dv4d3r",
-    "email": "dvader@empire.com",
-    "password": "iamyourfather"
+  '0Jh9jK': {
+    id: '0Jh9jK',
+    email: 'dood@whatever.com',
+    password: '$2a$10$C9zfa9PERq2u/N72vEi6Du1gier2lS8XpP.neblA0/2i7PyjBmxmC'
   }
 };
 
@@ -85,7 +86,7 @@ app.post("/register", (req, res) => {
     users[userID] = {
       "id": userID,
       "email": req.body.email,
-      "password": req.body.password
+      "password": bcrypt.hashSync(req.body.password, 10)
     };
     res.cookie("user_id", userID);
     res.redirect("/");
@@ -108,13 +109,13 @@ app.post("/login", (req, res) => {
   });
   if (!existingUser) {
     res.status(403).send("User with that e-mail does not exist");
-  } else if (existingUser.password !== req.body.password) {
-    res.status(403).send("Password incorrect");
-  } else {
+  } else if (bcrypt.compareSync(req.body.password, existingUser.password)) {
     res.cookie("user_id", existingUser.id);
     res.redirect("/");
+  } else {
+    res.status(403).send("Password incorrect");
   }
-
+  console.log(users);
 });
 
 //Show urls index
