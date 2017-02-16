@@ -3,17 +3,16 @@
 <nav>
   <ul>
     <% if (!email) { %>
-      <li><a href="/register">Register</a></li>
       <li><a href="/login">Login</a></li>
-      <% } else { %>
-        <li>Howdy, <%= email %></li>
-        <li><a href="/urls">Index</a></li>
-        <li><a href="/urls/new">New</a></li>
-        <li>
+      <li><a href="/register">Register</a></li>
+    <% } else { %>
+      <li>Howdy, <%= email %></li>
+      <li><a href="/urls">My links</a></li>
+      <li>
         <form method="POST" action="/logout">
-          <input id="logout" type="Submit" value="Logout">
+          <button id="logout" type="Submit">Logout</button>
         </form>
       </li>
-        <% } %>
+    <% } %>
   </ul>
 </nav>

@@ -2,15 +2,21 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
+const cookieSession = require('cookie-session');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
 const users = {
-  '0Jh9jK': {
-    id: '0Jh9jK',
-    email: 'dood@whatever.com',
-    password: '$2a$10$C9zfa9PERq2u/N72vEi6Du1gier2lS8XpP.neblA0/2i7PyjBmxmC'
+  '0b1w4n': {
+    id: '0b1w4n',
+    email: 'uncleben@tatooine.com',
+    password: '$2a$10$xfHRwqy0GUHPd3hTx.uV..VwLmz3RcFbZqoNn0I3f0zOwVWcGeg6m'
+  },
+  "dv4d3r": {
+    id: 'dv4d3r',
+    email: 'vader@empire.com',
+    password: '$2a$10$3UodVb9hjyRPzk690DmHcelYjDmNaFTv05U8OtDFxNg191bM8ZjgC'
   }
 };
 
@@ -45,21 +51,32 @@ function urlsForUser(id) {
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: [process.env.SESSION_SECRET || 'tiny-development']
+}));
 app.use(function(req, res, next) {
   res.locals.email = '';
-  if (users[req.cookies.user_id]) {
-    res.locals.email = users[req.cookies.user_id].email;
-    res.locals.urls = urlsForUser(req.cookies.user_id);
+  if (users[req.session.user_id]) {
+    res.locals.email = users[req.session.user_id].email;
+    res.locals.urls = urlsForUser(req.session.user_id);
   }
   next();
 });
+
+//app.use(cookieSession({
+//  name: 'session',
+//  [process.env.SESSION_SECRET || 'development']
+//  }));
+// Replace all instance of cookies in requests with session
+// res.cookies.property, req.sesson.propety
 
 //Redirect from root
 app.get("/", (req, res) => {
   if (res.locals.email) {
     res.redirect("/urls");
   } else {
-    res.render("login");
+    res.redirect("/login");
   }
 });
 
@@ -88,7 +105,7 @@ app.post("/register", (req, res) => {
       "email": req.body.email,
       "password": bcrypt.hashSync(req.body.password, 10)
     };
-    res.cookie("user_id", userID);
+    res.session.user_id = userID;
     res.redirect("/");
   }
 });
@@ -107,15 +124,12 @@ app.post("/login", (req, res) => {
   let existingUser = Object.values(users).find((user) => {
     return user.email === req.body.email;
   });
-  if (!existingUser) {
-    res.status(403).send("User with that e-mail does not exist");
-  } else if (bcrypt.compareSync(req.body.password, existingUser.password)) {
-    res.cookie("user_id", existingUser.id);
-    res.redirect("/");
+  if (!existingUser || !(bcrypt.compareSync(req.body.password, existingUser.password))) {
+    res.status(403).send("Incorrect credentials");
   } else {
-    res.status(403).send("Password incorrect");
+    req.session.user_id = existingUser.id;
+    res.redirect("/");
   }
-  console.log(users);
 });
 
 //Show urls index
@@ -123,13 +137,17 @@ app.get("/urls", (req, res) => {
   if (res.locals.email) {
     res.render("urls_index");
   } else {
-    res.status(401).send(`<a href="/login">Login</a> to see your ShortURLs.`);
+    res.status(401).send(`You are not logged in.<br><a href="/login">Login</a> to see your ShortURLs.`);
   }
 });
 
 //New URL form
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  if (res.locals.email) {
+    res.render("urls_new");
+  } else {
+    res.status(401).send(`You are not logged in.<br><a href="/login">Login</a> to create a new ShortURL.`);
+  }
 });
 
 //Create new url
@@ -138,7 +156,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateHash();
   urlDatabase[shortURL] = {
     "id": shortURL,
-    "owner": req.cookies.user_id,
+    "owner": req.session.user_id,
     "url": req.body.longURL
   };
   res.redirect(`/urls/${shortURL}`);
@@ -146,12 +164,26 @@ app.post("/urls", (req, res) => {
 
 //GET individual URL page (with update form)
 app.get("/urls/:id", (req, res) => {
-  res.render("urls_show", { shortURL: req.params.id, longURL: urlDatabase[req.params.id].url } );
+  if (!(urlDatabase.hasOwnProperty(req.params.id))) {
+    res.status(404).send("Not found<br>This ShortURL does not exist.");
+  } else if (!(res.locals.email)) {
+    res.status(401).send(`You are not logged in.<br><a href="/login">Login</a> to view this ShortURL.`);
+  } else if (urlDatabase[req.params.id].owner !== req.session.user_id) {
+    res.status(403).send(`Unauthorized: you are not the onwer of this ShortURL.`);
+  } else {
+    res.render("urls_show", { shortURL: req.params.id, longURL: urlDatabase[req.params.id].url } );
+  }
 });
 
 //Update an existing URL
 app.post("/urls/:id", (req, res) => {
-  if (urlDatabase[req.params.id].owner === req.cookies.user_id) {
+  if (!(urlDatabase.hasOwnProperty(req.params.id))) {
+    res.status(404).send("Not found<br>This ShortURL does not exist.");
+  } else if (!(res.locals.email)) {
+    res.status(401).send(`You are not logged in.<br><a href="/login">Login</a> to view this ShortURL.`);
+  } else if (urlDatabase[req.params.id].owner !== req.session.user_id) {
+    res.status(403).send(`Unauthorized: you are not the onwer of this ShortURL.`);
+  } else {
     urlDatabase[req.params.id].url = req.body.longURL;
     res.redirect("/urls");
   }
@@ -159,13 +191,16 @@ app.post("/urls/:id", (req, res) => {
 
 //Redirect user to the long URL to which a shortened URL is assigned
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(302, longURL);
+  if (!(urlDatabase.hasOwnProperty(req.params.shortURL))) {
+    res.status(404).send("Not found<br>This shortURL is unassigned.");
+  } else {
+    res.redirect(302, urlDatabase[req.params.shortURL].url);
+  }
 });
 
 //Delete a URL combo
 app.post("/urls/:id/delete", (req, res) => {
-  if (urlDatabase[req.params.id].owner === req.cookies.user_id) {
+  if (urlDatabase[req.params.id].owner === req.session.user_id) {
     delete urlDatabase[req.params.id];
     res.redirect("/urls");
   }
@@ -173,7 +208,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //Logout route
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/");
 });
 

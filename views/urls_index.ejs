@@ -8,7 +8,7 @@
     <% include ./partials/_header %>
   </header>
   <main>
-  <h1> Your Short URLs </h1>
+  <h1> Your ShortURLs </h1>
     <!-- <form id="#search" method="GET" action="/urls"> -->
       <!-- <label for="shortURL">Search</h1></label> -->
       <!-- <input id="shortURL" type="text" name="search"> -->
@@ -16,11 +16,11 @@
     <!-- </form> -->
     <ul id="urls">
       <% urls.forEach((url) => { %>
-      <li><%= url.id %> --> <%= url.url %>
-        <a href="/urls/<%= url.id %>">Edit</a>
-        <form method="POST" action="/urls/<%= url.id %>/delete">
-          <input id="shortURL" type="Submit" value="Delete">
-        </form>
+        <li><%= url.id %> --> <%= url.url %>
+          <a href="/urls/<%= url.id %>">Edit</a>
+          <form method="POST" action="/urls/<%= url.id %>/delete">
+            <input id="shortURL" type="Submit" value="Delete">
+          </form>
       <% }); %>
     </ul>
   <a href="/urls/new">Create new ShortURL</a>
