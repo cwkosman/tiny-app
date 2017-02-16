@@ -18,9 +18,11 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {};
+
 let templateVars = { urls: urlDatabase };
 
-function generateShortURL() {
+function generateHash() {
   const short = [];
   const base62Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   for (var i = 0; i < 6; i++) {
@@ -35,6 +37,40 @@ app.get("/", (req, res) => {
     res.redirect("/urls");
   } else {
     res.render("login", templateVars);
+  }
+});
+
+//Get register route
+app.get("/register", (req, res) => {
+  //templateVars.username = req.cookies.username;
+  if (res.locals.username) {
+    res.redirect("/");
+  } else {
+    res.render("register");
+  }
+});
+
+//POST register route
+app.post("/register", (req, res) => {
+  let emailExists = Object.values(users).some((user) => {
+    return user.email === req.body.email;
+  });
+  console.log(emailExists);
+  if (emailExists) {
+    res.status(400).send("Email already in use.");
+    console.log(users);
+  } else if (!req.body.email || !req.body.password) {
+    res.status(400).send("Specify both your email and a password.");
+    console.log(users);
+  } else {
+    let userID = generateHash();
+    users[userID] = {
+      "id": userID,
+      "email": req.body.email,
+      "password": req.body.password
+    };
+    res.cookie("user_id", userID);
+    res.redirect("/");
   }
 });
 
@@ -70,7 +106,7 @@ app.get("/urls/new", (req, res) => {
 //Create new url
 app.post("/urls", (req, res) => {
   //TODO: make sure generatedshortURL does not conflict
-  let shortURL = generateShortURL();
+  let shortURL = generateHash();
   urlDatabase[shortURL] = req.body.longURL;
   console.log(req.headers);
   res.redirect(`/urls/${shortURL}`);
