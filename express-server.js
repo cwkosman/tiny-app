@@ -5,11 +5,16 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const port = process.env.PORT || 8080;
 
+const users = {};
+
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(function(req, res, next) {
-  res.locals.username = req.cookies.username;
+  res.locals.email = '';
+  if (users[req.cookies.user_id]) {
+    res.locals.email = users[req.cookies.user_id].email;
+  }
   next();
 });
 
@@ -17,8 +22,6 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
-const users = {};
 
 let templateVars = { urls: urlDatabase };
 
@@ -33,7 +36,7 @@ function generateHash() {
 
 //Redirect from root
 app.get("/", (req, res) => {
-  if (res.locals.username) {
+  if (res.locals.email) {
     res.redirect("/urls");
   } else {
     res.render("login", templateVars);
@@ -43,7 +46,7 @@ app.get("/", (req, res) => {
 //Get register route
 app.get("/register", (req, res) => {
   //templateVars.username = req.cookies.username;
-  if (res.locals.username) {
+  if (res.locals.email) {
     res.redirect("/");
   } else {
     res.render("register");
@@ -55,13 +58,11 @@ app.post("/register", (req, res) => {
   let emailExists = Object.values(users).some((user) => {
     return user.email === req.body.email;
   });
-  console.log(emailExists);
+  console.log(res.locals.email);
   if (emailExists) {
     res.status(400).send("Email already in use.");
-    console.log(users);
   } else if (!req.body.email || !req.body.password) {
     res.status(400).send("Specify both your email and a password.");
-    console.log(users);
   } else {
     let userID = generateHash();
     users[userID] = {
@@ -77,10 +78,11 @@ app.post("/register", (req, res) => {
 //Get login route
 app.get("/login", (req, res) => {
   //templateVars.username = req.cookies.username;
-  if (res.locals.username) {
+  if (res.locals.email) {
     res.redirect("/");
   } else {
     res.render("login");
+    console.log(users[req.cookies.user_id].email);
   }
 });
 
@@ -141,7 +143,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //Logout route
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/");
 });
 

@@ -2,12 +2,13 @@
 <small>A URL shortener</small>
 <nav>
   <ul>
-    <li><a href="/urls">Index</a></li>
-    <li><a href="/urls/new">New</a></li>
-    <% if (!username) { %>
+    <% if (!email) { %>
+      <li><a href="/register">Register</a></li>
       <li><a href="/login">Login</a></li>
       <% } else { %>
-        <li>Howdy, <%= username %></li>
+        <li>Howdy, <%= email %></li>
+        <li><a href="/urls">Index</a></li>
+        <li><a href="/urls/new">New</a></li>
         <li>
         <form method="POST" action="/logout">
           <input id="logout" type="Submit" value="Logout">
