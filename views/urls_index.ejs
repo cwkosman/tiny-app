@@ -15,13 +15,13 @@
       <!-- <input type="Submit" value="Search"> -->
     <!-- </form> -->
     <ul id="urls">
-      <% for (url in urls) { %>
-      <li><%= url %> --> <%= urls[url] %>
-        <a href="/urls/<%= url %>">Edit</a>
-        <form method="POST" action="/urls/<%= url %>/delete">
+      <% urls.forEach((url) => { %>
+      <li><%= url.id %> --> <%= url.url %>
+        <a href="/urls/<%= url.id %>">Edit</a>
+        <form method="POST" action="/urls/<%= url.id %>/delete">
           <input id="shortURL" type="Submit" value="Delete">
         </form>
-      <% } %>
+      <% }); %>
     </ul>
   <a href="/urls/new">Create new ShortURL</a>
   </main>
