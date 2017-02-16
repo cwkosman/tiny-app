@@ -19,7 +19,7 @@
         <li><%= url.id %> --> <%= url.url %>
           <a href="/urls/<%= url.id %>">Edit</a>
           <form method="POST" action="/urls/<%= url.id %>/delete">
-            <input id="shortURL" type="Submit" value="Delete">
+            <button id="shortURL" type="Submit">Delete</button>
           </form>
       <% }); %>
     </ul>
