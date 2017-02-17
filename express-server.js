@@ -36,21 +36,27 @@ const urlDatabase = {
     "owner": "dv4d3r",
     "url": "http://www.lighthouselabs.ca",
     "created": new Date(1487011192000),
-    "visits": 2
+    "visits": 0,
+    "uniqueVisits": 0,
+    "visitLog": {}
   },
   "9sm5xK": {
     "id": "9sm5xK",
     "owner": "dv4d3r",
     "url": "http://www.google.com",
     "created": new Date(1487191894000),
-    "visits": 1
+    "visits": 0,
+    "uniqueVisits": 0,
+    "visitLog": {}
   },
   "7Gjy67": {
     "id": "7Gjy67",
     "owner": "0b1w4n",
     "url": "http://www.reddit.com",
     "created": new Date(1487282450000),
-    "visits": 0
+    "visits": 0,
+    "uniqueVisits": 0,
+    "visitLog": {}
   }
 };
 
@@ -75,7 +81,6 @@ app.use(function(req, res, next) {
   }
   next();
 });
-
 
 //Redirect from root
 app.get("/", (req, res) => {
@@ -161,6 +166,7 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
+
 //Create new url
 app.post("/urls", (req, res) => {
   let shortURL = generateHash();
@@ -174,8 +180,8 @@ app.post("/urls", (req, res) => {
     "owner": req.session.userId,
     "url": req.body.longURL,
     "created": new Date(),
-    "visitLog": {},
-    "visits": 0
+    "visits": 0,
+    "visitLog": {}
   };
   res.redirect(`/urls/${shortURL}`);
 });
@@ -218,6 +224,12 @@ app.get("/u/:shortURL", (req, res) => {
     }
     res.redirect(302, alias.url);
     alias.visits++;
+    if (!alias.visitLog[req.cookies.visitorId]) {
+      alias.visitLog[req.cookies.visitorId] = [];
+      alias.uniqueVisits++;
+    }
+    alias.visitLog[req.cookies.visitorId].push(new Date());
+    console.log(alias, alias.visitLog);
   }
 });
 

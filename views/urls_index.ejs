@@ -25,7 +25,8 @@
         <td>Location</td>
         <td>Created</td>
         <td>Visits</td>
-        <td>Edit</td>
+        <td>Unique Visitors</td>
+        <td>Edit/Track</td>
         <td>Delete</td>
       </tr>
       <% urls.forEach((url) => { %>
@@ -34,6 +35,7 @@
         <td><%= url.url %></td>
         <td><%= url.created.toLocaleString() %></td>
         <td><%= url.visits %></td>
+        <td><%= url.uniqueVisits %></td>
         <td><a href="/urls/<%= url.id %>">Edit</a></td>
         <td>
           <form method="POST" action="/urls/<%= url.id %>/delete?_method=DELETE">
