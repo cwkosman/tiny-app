@@ -184,7 +184,7 @@ app.get("/urls/:id", (req, res) => {
   } else if (!(res.locals.email)) {
     res.status(401).send(`You are not logged in.<br><a href="/login">Login</a> to view this ShortURL.`);
   } else if (urlDatabase[req.params.id].owner !== req.session.userId) {
-    res.status(403).send(`Unauthorized: you are not the onwer of this ShortURL.`);
+    res.status(403).send(`Unauthorized: you are not the owner of this ShortURL.`);
   } else {
     res.render("urls_show", { url: urlDatabase[req.params.id] } );
   }
@@ -197,7 +197,7 @@ app.post("/urls/:id", (req, res) => {
   } else if (!(res.locals.email)) {
     res.status(401).send(`You are not logged in.<br><a href="/login">Login</a> to view this ShortURL.`);
   } else if (urlDatabase[req.params.id].owner !== req.session.userId) {
-    res.status(403).send(`Unauthorized: you are not the onwer of this ShortURL.`);
+    res.status(403).send(`Unauthorized: you are not the owner of this ShortURL.`);
   } else {
     urlDatabase[req.params.id].url = req.body.longURL;
     res.redirect("/urls");
