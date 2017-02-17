@@ -36,7 +36,7 @@
         <td><%= url.visits %></td>
         <td><a href="/urls/<%= url.id %>">Edit</a></td>
         <td>
-          <form method="POST" action="/urls/<%= url.id %>/delete">
+          <form method="POST" action="/urls/<%= url.id %>/delete?_method=DELETE">
             <button id="shortURL" type="Submit">Delete</button>
           </form>
         </td>

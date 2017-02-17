@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
+const methodOverride = require('method-override');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -61,6 +62,7 @@ function urlsForUser(id) {
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride('_method'));
 app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
@@ -73,6 +75,7 @@ app.use(function(req, res, next) {
   }
   next();
 });
+
 
 //Redirect from root
 app.get("/", (req, res) => {
@@ -191,7 +194,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 //Update an existing URL
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   if (!(urlDatabase.hasOwnProperty(req.params.id))) {
     res.status(404).send("Not found<br>This ShortURL does not exist.");
   } else if (!(res.locals.email)) {
@@ -219,7 +222,7 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 //Delete a URL combo
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id/delete", (req, res) => {
   if (urlDatabase[req.params.id].owner === req.session.userId) {
     delete urlDatabase[req.params.id];
     res.redirect("/urls");
