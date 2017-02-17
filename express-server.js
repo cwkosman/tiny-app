@@ -70,7 +70,6 @@ app.use(function(req, res, next) {
   res.locals.email = '';
   if (users[req.session.userId]) {
     res.locals.email = users[req.session.userId].email;
-    res.locals.urls = urlsForUser(req.session.userId);
   }
   next();
 });
@@ -144,7 +143,7 @@ app.post("/login", (req, res) => {
 //Show urls index
 app.get("/urls", (req, res) => {
   if (res.locals.email) {
-    res.render("urls_index");
+    res.render("urls_index", res.locals.urls = urlsForUser(req.session.userId));
   } else {
     res.status(401).send(`You are not logged in.<br><a href="/login">Login</a> to see your ShortURLs.`);
   }
