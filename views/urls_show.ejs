@@ -25,14 +25,14 @@
     <section>
       <h2>History</h2>
       <ul>
-        <% for (let visitor in url.visitLog) { %>
         <% let i = 1 %>
+        <% for (let visitor in url.visitLog) { %>
           <li>User <%= i %> <small>(<%= visitor %>)</small></li>
             <ul>
               <% url.visitLog[visitor].forEach((visit) => { %>
              <li><%= visit.toLocaleString() %></li>
               <% }) %>
-           </ul>\
+           </ul>
         <% i++ %>
         <% } %>
       </ul>

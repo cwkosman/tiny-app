@@ -229,7 +229,6 @@ app.get("/u/:shortURL", (req, res) => {
       alias.uniqueVisits++;
     }
     alias.visitLog[req.cookies.visitorId].push(new Date());
-    console.log(alias, alias.visitLog);
   }
 });
 
