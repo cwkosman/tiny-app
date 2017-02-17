@@ -22,7 +22,8 @@
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-alpha.3",
     "ejs": "^2.5.5",
-    "express": "^4.14.1"
+    "express": "^4.14.1",
+    "method-override": "^2.3.7"
   },
   "engines": {
     "node": ">=v7.0.0"
