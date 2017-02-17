@@ -8,12 +8,14 @@
     <% include ./partials/_header %>
   </header>
   <main>
-    <form method="POST" action="/urls/<%= shortURL %>">
-      <label for="longURL"><h1>Update ShortURL <%= shortURL %></h1></label>
-      <input id="longURL" type="text" name="longURL" value="<%= longURL %>">
+    <form method="POST" action="/urls/<%= url.id %>" style="display: inline;">
+      <label for="longURL"><h1>Update ShortURL <%= url.id %></h1></label>
+      <p>Created <%= url.created.toLocaleString() %></p>
+      <p>Visited <%= url.visits %> times</p>
+      <input id="longURL" type="text" name="longURL" value="<%= url.url %>" style="width:400px">
       <button type="submit">Update</button>
     </form>
-    <form method="POST" action="/urls/<%= shortURL %>/delete">
+    <form method="POST" action="/urls/<%= url.id %>/delete" style="display: inline;">
       <button id="shortURL" type="Submit">Delete</button>
     </form>
   </main>

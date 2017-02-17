@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <title>TinyApp</title>
+  <style>
+    td {padding: 10px;}
+  </style>
 </head>
 <body>
   <header>
@@ -9,21 +12,37 @@
   </header>
   <main>
   <h1> Your ShortURLs </h1>
+  <!--TODO implement search -->
     <!-- <form id="#search" method="GET" action="/urls"> -->
       <!-- <label for="shortURL">Search</h1></label> -->
       <!-- <input id="shortURL" type="text" name="search"> -->
-      <!-- <input type="Submit" value="Search"> -->
+      <!-- <button type="Submit">Search</button> -->
     <!-- </form> -->
-    <ul id="urls">
+  <a href="/urls/new">Create new ShortURL</a>
+    <table id="urls">
+      <tr id="header-row">
+        <td>ShortURL</td>
+        <td>Location</td>
+        <td>Created</td>
+        <td>Visits</td>
+        <td>Edit</td>
+        <td>Delete</td>
+      </tr>
       <% urls.forEach((url) => { %>
-        <li><%= url.id %> --> <%= url.url %>
-          <a href="/urls/<%= url.id %>">Edit</a>
+      <tr>
+        <td><a href="/u/<%= url.id %>"><%= url.id %></a></td>
+        <td><%= url.url %></td>
+        <td><%= url.created.toLocaleString() %></td>
+        <td><%= url.visits %></td>
+        <td><a href="/urls/<%= url.id %>">Edit</a></td>
+        <td>
           <form method="POST" action="/urls/<%= url.id %>/delete">
             <button id="shortURL" type="Submit">Delete</button>
           </form>
+        </td>
+      </tr>
       <% }); %>
-    </ul>
-  <a href="/urls/new">Create new ShortURL</a>
+    </table>
   </main>
 </body>
 </html>

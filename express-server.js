@@ -33,18 +33,29 @@ const urlDatabase = {
   "b2xVn2": {
     "id": "b2xVn2",
     "owner": "dv4d3r",
-    "url": "http://www.lighthouselabs.ca"
+    "url": "http://www.lighthouselabs.ca",
+    "created": new Date(1487011192000),
+    "visits": 2
   },
   "9sm5xK": {
     "id": "9sm5xK",
     "owner": "dv4d3r",
-    "url": "http://www.google.com"
+    "url": "http://www.google.com",
+    "created": new Date(1487191894000),
+    "visits": 1
+  },
+  "7Gjy67": {
+    "id": "7Gjy67",
+    "owner": "0b1w4n",
+    "url": "http://www.reddit.com",
+    "created": new Date(1487282450000),
+    "visits": 0
   }
 };
 
 function urlsForUser(id) {
-  return Object.values(urlDatabase).filter((short) => {
-    return short.owner === id;
+  return Object.values(urlDatabase).filter((url) => {
+    return url.owner === id;
   });
 }
 
@@ -63,13 +74,6 @@ app.use(function(req, res, next) {
   }
   next();
 });
-
-//app.use(cookieSession({
-//  name: 'session',
-//  [process.env.SESSION_SECRET || 'development']
-//  }));
-// Replace all instance of cookies in requests with session
-// res.cookies.property, req.sesson.propety
 
 //Redirect from root
 app.get("/", (req, res) => {
@@ -157,7 +161,10 @@ app.post("/urls", (req, res) => {
   urlDatabase[shortURL] = {
     "id": shortURL,
     "owner": req.session.userId,
-    "url": req.body.longURL
+    "url": req.body.longURL,
+    "created": new Date(),
+    "visitLog": {},
+    "visits": countVisits()
   };
   res.redirect(`/urls/${shortURL}`);
 });
@@ -171,7 +178,7 @@ app.get("/urls/:id", (req, res) => {
   } else if (urlDatabase[req.params.id].owner !== req.session.userId) {
     res.status(403).send(`Unauthorized: you are not the onwer of this ShortURL.`);
   } else {
-    res.render("urls_show", { shortURL: req.params.id, longURL: urlDatabase[req.params.id].url } );
+    res.render("urls_show", { url: urlDatabase[req.params.id] } );
   }
 });
 
@@ -194,7 +201,12 @@ app.get("/u/:shortURL", (req, res) => {
   if (!(urlDatabase.hasOwnProperty(req.params.shortURL))) {
     res.status(404).send("Not found<br>This shortURL is unassigned.");
   } else {
-    res.redirect(302, urlDatabase[req.params.shortURL].url);
+    let alias = urlDatabase[req.params.shortURL];
+    if (!req.cookies.visitorId) {
+      res.cookie("visitorId", generateHash());
+    }
+    res.redirect(302, alias.url);
+    alias.visits++;
   }
 });
 
