@@ -104,12 +104,17 @@ app.post("/register", (req, res) => {
     res.status(400).send("Specify both your email and a password.");
   } else {
     let userID = generateHash();
+    if (users[userID]) {
+      while (users[userID]) {
+        userID = generateHash();
+      }
+    }
     users[userID] = {
       "id": userID,
       "email": req.body.email,
       "password": bcrypt.hashSync(req.body.password, 10)
     };
-    res.session.userId = userID;
+    req.session.userId = userID;
     res.redirect("/");
   }
 });
@@ -156,15 +161,19 @@ app.get("/urls/new", (req, res) => {
 
 //Create new url
 app.post("/urls", (req, res) => {
-  //TODO: make sure generatedshortURL does not conflict
   let shortURL = generateHash();
+  if (urlDatabase[shortURL]) {
+    while(urlDatabase[shortURL]) {
+      shortURL = generateHash();
+    }
+  }
   urlDatabase[shortURL] = {
     "id": shortURL,
     "owner": req.session.userId,
     "url": req.body.longURL,
     "created": new Date(),
     "visitLog": {},
-    "visits": countVisits()
+    "visits": 0
   };
   res.redirect(`/urls/${shortURL}`);
 });
